@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,27 +33,31 @@ public class ProdutoControllerTest {
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 
-	Categoria categoriaUm = new Categoria(0L, "Analgésicos", "Aliviam a dor");
-	Categoria categoriaDois = new Categoria(1L, "Analgésicos", "Aliviam a dor");
-	Categoria categoriaTres = new Categoria(2L, "Analgésicos", "Aliviam a dor");
-	Categoria categoriaQuatro = new Categoria(3L, "Analgésicos", "Aliviam a dor");
+	Categoria categoriaUm = new Categoria(1L, "Analgésicos", "Aliviam a dor");
+	Categoria categoriaDois = new Categoria(2L, "Antibióticos", "Combatem infecções bacterianas");
+	Categoria categoriaTres = new Categoria(3L, "Antiinflamatórios", "Reduzem a inflamação");
+	Categoria categoriaQuatro = new Categoria(4L, "Antidepressivos", "Tratam depressão e ansiedade");
 	
+	Produto produtoUm = new Produto(1L, "Rivotril", "Rivotril é indicado para transtorno de ansiedade", categoriaUm);
+	Produto produtoDois = new Produto(2L, "Dorflex", "Dorflex é indicado para dor de cabeça", categoriaDois);
+	Produto produtoTres = new Produto(3L, "Dipirona", "Dipirona é indicado para dor de estômago", categoriaTres);
+	Produto produtoQuatro = new Produto(4L, "Paracetamol", "Paracetamol é indicado para dor de dente", categoriaQuatro);
+
 	@BeforeAll
 	void start() {
-		
+
 		produtoRepository.deleteAll();
 		categoriaRepository.deleteAll();
-		
 
 		categoriaRepository.save(categoriaUm);
 		categoriaRepository.save(categoriaDois);
 		categoriaRepository.save(categoriaTres);
 		categoriaRepository.save(categoriaQuatro);
 
-		produtoRepository.save(new Produto(0L, "Rivotril", "Rivotril é indicado para transtorno de ansiedade", null));
-		produtoRepository.save(new Produto(1L, "Dorflex", "Dorflex é indicado para dor de cabeça", null));
-		produtoRepository.save(new Produto(2L, "Dipirona", "Dipirona é indicado para dor de estômago", null));
-		produtoRepository.save(new Produto(3L, "Paracetamol", "Paracetamol é indicado para dor de dente", null));
+		produtoRepository.save(produtoUm);
+		produtoRepository.save(produtoDois);
+		produtoRepository.save(produtoTres);
+		produtoRepository.save(produtoQuatro);
 
 	}
 
@@ -63,13 +68,15 @@ public class ProdutoControllerTest {
 		ResponseEntity<String> resposta = testRestTemplate.exchange("/produtos", HttpMethod.GET, null, String.class);
 
 		assertEquals(HttpStatus.OK, resposta.getStatusCode());
+		// assertEquals(resposta.getBody().contains("Rivotril"), true);
 	}
 
 	@Test
 	@DisplayName("Listar produto por ID")
 	public void deveMostrarProdutoPorId() {
 
-		ResponseEntity<Produto> resposta = testRestTemplate.exchange("/produtos/2", HttpMethod.GET, null, Produto.class);
+		ResponseEntity<Produto> resposta = testRestTemplate.exchange("/produtos/2", HttpMethod.GET, null,
+				Produto.class);
 
 		assertEquals(HttpStatus.OK, resposta.getStatusCode());
 	}
@@ -84,39 +91,34 @@ public class ProdutoControllerTest {
 		assertEquals(HttpStatus.OK, resposta.getStatusCode());
 	}
 
-	/* TODO: Implementar testes de criação e atualização de produtos
-	 * @Test
-	 * 
-	 * @DisplayName("Criar um produto") public void deveCriarproduto() {
-	 * 
-	 * Produto produto = new Produto(0L, "Rivotril",
-	 * "Rivotril é indicado para transtorno de ansiedade e transtorno de humor",
-	 * null);
-	 * 
-	 * produto.setCategoria(categoriaUm);
-	 * 
-	 * HttpEntity<Produto> corpoRequisicao = new HttpEntity<Produto>(produto);
-	 * 
-	 * ResponseEntity<Produto> resposta = testRestTemplate.exchange("/produtos",
-	 * HttpMethod.POST, corpoRequisicao, Produto.class);
-	 * 
-	 * assertEquals(HttpStatus.CREATED, resposta.getStatusCode()); }
-	 * 
-	 * @Test
-	 * 
-	 * @DisplayName("Atualizar um produto") public void deveAtualizarproduto() {
-	 * 
-	 * Produto produto = new Produto(0L, "Rivotril",
-	 * "Rivotril é indicado para transtorno de ansiedade e transtorno de humor",
-	 * null);
-	 * 
-	 * HttpEntity<Produto> corpoRequisicao = new HttpEntity<Produto>(produto);
-	 * 
-	 * ResponseEntity<Produto> resposta = testRestTemplate.exchange("/produtos/0",
-	 * HttpMethod.PUT, corpoRequisicao, Produto.class);
-	 * 
-	 * assertEquals(HttpStatus.CREATED, resposta.getStatusCode()); }
-	 */
+	// TODO: Implementar teste atualização de produtos
+	@Test
+	@DisplayName("Criar um produto")
+	public void deveCriarproduto() {
+
+		HttpEntity<Produto> corpoRequisicao = new HttpEntity<Produto>(produtoUm);
+		
+		produtoUm.setId(5L);
+
+		ResponseEntity<Produto> resposta = testRestTemplate.exchange("/produtos", HttpMethod.POST, corpoRequisicao,
+				Produto.class);
+
+		assertEquals(HttpStatus.CREATED, resposta.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("Atualizar um produto")
+	public void deveAtualizarproduto() {
+
+        Produto produto = produtoRepository.findById(3L).get();
+
+		HttpEntity<Produto> corpoRequisicao = new HttpEntity<Produto>(produto);
+
+		ResponseEntity<Produto> resposta = testRestTemplate.exchange("/produtos", HttpMethod.PUT, corpoRequisicao,
+				Produto.class);
+
+		assertEquals(HttpStatus.OK, resposta.getStatusCode());
+	}
 
 	@Test
 	@DisplayName("Deletar um produto")

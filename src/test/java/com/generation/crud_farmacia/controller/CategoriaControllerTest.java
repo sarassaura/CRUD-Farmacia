@@ -32,10 +32,10 @@ public class CategoriaControllerTest {
 	void start() {
 		categoriaRepository.deleteAll();
 
-		categoriaRepository.save(new Categoria(0L, "Analgésicos", "Aliviam a dor"));
-		categoriaRepository.save(new Categoria(1L, "Antibióticos", "Combatem infecções bacterianas"));
-		categoriaRepository.save(new Categoria(2L, "Antiinflamatórios", "Reduzem a inflamação"));
-		categoriaRepository.save(new Categoria(3L, "Antidepressivos", "Tratam depressão e ansiedade"));
+		categoriaRepository.save(new Categoria(1L, "Analgésicos", "Aliviam a dor"));
+		categoriaRepository.save(new Categoria(2L, "Antibióticos", "Combatem infecções bacterianas"));
+		categoriaRepository.save(new Categoria(3L, "Antiinflamatórios", "Reduzem a inflamação"));
+		categoriaRepository.save(new Categoria(4L, "Antidepressivos", "Tratam depressão e ansiedade"));
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class CategoriaControllerTest {
 	@DisplayName("Criar uma Categoria")
 	public void deveCriarCategoria() {
 		
-		HttpEntity<Categoria> corpoRequisicao = new HttpEntity<Categoria>(new Categoria(4L, "Antihistamínicos", "Aliviam alergias"));
+		HttpEntity<Categoria> corpoRequisicao = new HttpEntity<Categoria>(new Categoria(5L, "Antihistamínicos", "Aliviam alergias"));
 
 		ResponseEntity<Categoria> resposta = testRestTemplate
 				.exchange("/categorias", HttpMethod.POST, corpoRequisicao, Categoria.class);
