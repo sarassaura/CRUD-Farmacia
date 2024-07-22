@@ -18,6 +18,15 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "tb_produtos")
 public class Produto {
+	
+	public Produto(Long id, String nome, String descricao, Categoria categoria) {
+		this.id = id;
+		this.nome = nome;
+		this.descricao = descricao;
+		this.categoria = categoria;
+	}
+	
+	public Produto() { }
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

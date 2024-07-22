@@ -18,6 +18,14 @@ import jakarta.validation.constraints.NotNull;
 @Table(name = "tb_categorias")
 public class Categoria {
 	
+	public Categoria(Long id, String nome, String descricao) {
+		this.id = id;
+		this.nome = nome;
+		this.descricao = descricao;
+	}
+	
+	public Categoria() { }
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
